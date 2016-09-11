@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -51,9 +52,9 @@ public class NewsAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.webTitleTextView = (TextView) listItemView.findViewById(R.id.webTitle_textview);
             holder.authorTextView = (TextView) listItemView.findViewById(R.id.author_textview);
-            convertView.setTag(holder);
+            listItemView.setTag(holder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            holder = (ViewHolder) listItemView.getTag();
         }
         /**
          * get the new object and set the value
