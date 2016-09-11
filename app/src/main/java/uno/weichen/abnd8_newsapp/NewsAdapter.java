@@ -1,6 +1,7 @@
 package uno.weichen.abnd8_newsapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import java.util.List;
  * Created by weichen on 9/10/16.
  */
 public class NewsAdapter extends BaseAdapter {
+    public static final String LOG_TAG = NewsAdapter.class.getName();
+
     List<News> newsList;
     Context context;
 
@@ -25,12 +28,13 @@ public class NewsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return newsList.size();
+        Log.d(LOG_TAG,"GetCount number is "+newsList.size());
+        return this.newsList.size();
     }
 
     @Override
     public News getItem(int position) {
-        return newsList.get(position);
+        return this.newsList.get(position);
     }
 
     @Override
@@ -38,11 +42,22 @@ public class NewsAdapter extends BaseAdapter {
         return position;
     }
 
+    public void addAll(List newList) {
+        newsList.clear();
+        newsList.addAll(newList);
+    }
+
+    public void clear(List newList){
+        newsList.clear();
+    }
+
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         /**
          * inflate the view and set the view holder
          */
+        Log.d(LOG_TAG,"getView start");
         View listItemView = convertView;
         ViewHolder holder;
         if (listItemView == null) {
@@ -51,17 +66,19 @@ public class NewsAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.webTitleTextView = (TextView) listItemView.findViewById(R.id.webTitle_textview);
             holder.authorTextView = (TextView) listItemView.findViewById(R.id.author_textview);
-            convertView.setTag(holder);
+            holder.dateTextView = (TextView) listItemView.findViewById(R.id.date_textview);
+            listItemView.setTag(holder);
         } else {
-            holder = (ViewHolder) convertView.getTag();
+            holder = (ViewHolder) listItemView.getTag();
         }
         /**
          * get the new object and set the value
          */
         News news = getItem(position);
 
-        holder.authorTextView.setText(news.getmWebTitle());
-        holder.webTitleTextView.setText(news.getmAuthor());
+        holder.webTitleTextView.setText(news.getmWebTitle());
+        holder.authorTextView.setText(news.getmAuthor());
+        holder.dateTextView.setText(news.getmWebPublicationDate());
 
         return listItemView;
     }
@@ -70,5 +87,6 @@ public class NewsAdapter extends BaseAdapter {
     static class ViewHolder {
         private TextView webTitleTextView;
         private TextView authorTextView;
+        private TextView dateTextView;
     }
 }

@@ -4,18 +4,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingLeft="32dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp">
 
     <TextView
         android:id="@+id/webTitle_textview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="WebTitle"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="WebTitle"
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/author_textview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         tools:text="author"/>
+
+    <TextView
+        android:id="@+id/date_textview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="right"
+        tools:text="date"/>
+
 
 </LinearLayout>

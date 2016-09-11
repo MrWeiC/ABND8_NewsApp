@@ -18,16 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Helper methods related to requesting and receiving news data from guardian.
- * Created by weichen on 9/10/16.
+ * Helper methods related to requesting and receiving news data from guardian. Created by weichen on
+ * 9/10/16.
  */
 public class QueryUtils {
     public static final String LOG_TAG = MainActivity.class.getName();
 
     /**
      * Create a private constructor because no one should ever create a {@link QueryUtils} object.
-     * This class is only meant to hold static variables and methods, which can be accessed
-     * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
+     * This class is only meant to hold static variables and methods, which can be accessed directly
+     * from the class name QueryUtils (and an object instance of QueryUtils is not needed).
      */
     private QueryUtils() {
     }
@@ -103,8 +103,7 @@ public class QueryUtils {
     }
 
     /**
-     * Return a list of {@link News} objects that has been built up from
-     * parsing a JSON response.
+     * Return a list of {@link News} objects that has been built up from parsing a JSON response.
      */
     public static ArrayList<News> extractNews(String jsonString) {
 
@@ -117,28 +116,28 @@ public class QueryUtils {
         try {
 
             // build up a list of News objects with the corresponding data.
-            JSONObject root =  new JSONObject(jsonString);
-            JSONObject response =  root.getJSONObject("response");
+            JSONObject root = new JSONObject(jsonString);
+            JSONObject response = root.getJSONObject("response");
             JSONArray results = response.getJSONArray("results");
-            for(int i=0;i<results.length();i++){
+            for (int i = 0; i < results.length(); i++) {
                 JSONObject result = results.getJSONObject(i);
                 String webTitle = result.getString("webTitle");
                 String webUrl = result.getString("webUrl");
+                String webPublicationDate = formatDate(result.getString("webPublicationDate"));
                 String author = "";
                 JSONArray references = result.getJSONArray("references");
-                if(references.length()>0){
+                if (references.length() > 0) {
                     try {
                         JSONObject authorJSON = references.getJSONObject(0);
                         author = authorJSON.getString("id");
-                        //TODO: need to reformat the author String
-                    }catch (JSONException e){
+                        //90% of time, the author section will be empty.
+                    } catch (JSONException e) {
                         Log.e(LOG_TAG, "Problem get author text even if there are author info.", e);
 
                     }
                 }
-                newsData.add(new News(webTitle,webUrl,author));
+                newsData.add(new News(webTitle, webUrl, author, webPublicationDate));
             }
-
 
 
         } catch (JSONException e) {
@@ -152,12 +151,22 @@ public class QueryUtils {
         return newsData;
     }
 
+    private static String formatDate(String webPublicationDate) {
+        //I don't find good way to covert an 8601 format 8601 format to Date. So I will truncaket time
+        if (webPublicationDate == null) {
+            return "";
+        }
+
+        return webPublicationDate.substring(0,10);
+    }
+
     /**
      * Overal function to get the newsData list from an Url
+     *
      * @param stringUrl
      * @return
      */
-    public static List<News> fetchNewsData(String stringUrl){
+    public static List<News> fetchNewsData(String stringUrl) {
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {

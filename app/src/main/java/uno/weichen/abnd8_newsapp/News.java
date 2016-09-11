@@ -7,11 +7,13 @@ public class News {
     private String mWebTitle;
     private String mWebUrl;
     private String mAuthor;
+    private String mWebPublicationDate;
 
-    public News(String mWebTitle, String mWebUrl, String mAuthor) {
+    public News(String mWebTitle, String mWebUrl, String mAuthor, String mWebPublicationDate ) {
         this.mWebTitle = mWebTitle;
         this.mWebUrl = mWebUrl;
         this.mAuthor = mAuthor;
+        this.mWebPublicationDate = mWebPublicationDate;
     }
 
     public String getmWebTitle() {
@@ -24,5 +26,9 @@ public class News {
 
     public String getmAuthor() {
         return mAuthor;
+    }
+
+    public String getmWebPublicationDate() {
+        return mWebPublicationDate;
     }
 }
