@@ -33,21 +33,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          */
         mNewsListView = (ListView) findViewById(R.id.list);
         // Create a new {@link NewsAdapter} of news
-        // mAdapter = new NewsAdapter(this, newsList);
+        mAdapter = new NewsAdapter(this, newsList);
         mNewsListView.setAdapter(mAdapter);
 
-        List<News> newsList2 = new ArrayList<>();
-        newsList2.add(new News("test1","test2","test3"));
-        newsList2.add(new News("test4","test5","test6"));
-        mAdapter = new NewsAdapter(this, newsList2);
 
         // Create a Async tasks loader to query the list of earthquake locations.
         // Get a reference to the LoaderManager, in order to interact with loaders.
-        //android.app.LoaderManager loaderManager = getLoaderManager();
+        android.app.LoaderManager loaderManager = getLoaderManager();
         // Initialize the loader. Pass in the int ID constant defined above and pass in null for
         // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
         // because this activity implements the LoaderCallbacks interface).
-        //loaderManager.initLoader(NEWS_LOADER_ID, null, this);
+        loaderManager.initLoader(NEWS_LOADER_ID, null, this);
 
 
     }
