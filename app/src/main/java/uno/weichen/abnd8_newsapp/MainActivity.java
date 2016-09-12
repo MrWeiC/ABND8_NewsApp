@@ -18,14 +18,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<News>> {
 
     /**
      * URL for news data from Guardianapis
      */
-    //private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-references=author";
-    private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?q=fasefasdfcfawefaedfawefawefawfargcdyjerty&type=article&page-sizxasdfasdfaxe=24&api-key=test&show-references=authordfasefasdfcrgfgxdgfxasxgfgadsgfasdfxa";
+    private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-references=author";
+    //private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?q=fasefasdfcfawefaedfawefawefawfargcdyjerty&type=article&page-sizxasdfasdfaxe=24&api-key=test&show-references=authordfasefasdfcrgfgxdgfxasxgfgadsgfasdfxa";
 
     public static final String LOG_TAG = MainActivity.class.getName();
 
@@ -43,20 +44,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         /**
-         * Setup View/Data components
+         * Resolve View
          */
         mNewsListView = (ListView) findViewById(R.id.list);
+        // Get the ProgressBar view
+        mProgressbarView = (ProgressBar) findViewById(R.id.loading_spinner);
+        // Get the TextView view
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_list_view);
 
-        mNewsListView.setEmptyView(mEmptyStateTextView);
+        /**
+         * Set View
+          */
         // Create a new {@link NewsAdapter} of news
         mAdapter = new NewsAdapter(this, newsList);
         mNewsListView.setAdapter(mAdapter);
-
-        // Get the TextView view
-        mEmptyStateTextView = (TextView) findViewById(R.id.empty_list_view);
-        // Get the ProgressBar view
-        mProgressbarView = (ProgressBar) findViewById(R.id.loading_spinner);
-
+        mNewsListView.setEmptyView(mEmptyStateTextView);
 
 
 
