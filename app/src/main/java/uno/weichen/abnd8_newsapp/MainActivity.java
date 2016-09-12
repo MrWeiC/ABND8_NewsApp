@@ -18,18 +18,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<News>> {
 
+    public static final String LOG_TAG = MainActivity.class.getName();
     /**
      * URL for news data from Guardianapis
      */
     private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-references=author";
-    //private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?q=fasefasdfcfawefaedfawefawefawfargcdyjerty&type=article&page-sizxasdfasdfaxe=24&api-key=test&show-references=authordfasefasdfcrgfgxdgfxasxgfgadsgfasdfxa";
-
-    public static final String LOG_TAG = MainActivity.class.getName();
-
     private static final int NEWS_LOADER_ID = 1;
     public List<News> newsList = new ArrayList<>();
     private NewsAdapter mAdapter;
@@ -54,12 +50,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         /**
          * Set View
-          */
+         */
         // Create a new {@link NewsAdapter} of news
         mAdapter = new NewsAdapter(this, newsList);
         mNewsListView.setAdapter(mAdapter);
         mNewsListView.setEmptyView(mEmptyStateTextView);
-
 
 
         //Set the listview lister that to monitor click
@@ -88,12 +83,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         } else {
             mProgressbarView.setVisibility(View.GONE);
-            mEmptyStateTextView.setText("No Internet Connection");
-            if(mNewsListView.getAdapter() == null){
+            mEmptyStateTextView.setText(R.string.no_internet);
+            if (mNewsListView.getAdapter() == null) {
                 Log.v(LOG_TAG, "Adapter is really null");
                 return;
             }
-            if(mAdapter.isEmpty()){
+            if (mAdapter.isEmpty()) {
                 Log.v(LOG_TAG, "Adapter is empty ");
 
             }
@@ -109,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<News>> loader, List<News> newsList) {
-        mEmptyStateTextView.setText("No news found");
+        mEmptyStateTextView.setText(R.string.no_news);
         mProgressbarView.setVisibility(View.GONE);
         if (newsList == null) {
             Log.v(LOG_TAG, "newsList is null");
@@ -133,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void updateUi(List<News> newsList) {
         mAdapter.clear();
         if (newsList != null) {
-            if(mAdapter.isEmpty()) {
+            if (mAdapter.isEmpty()) {
                 Log.v(LOG_TAG, "mAdapter is empty");
             }
             mAdapter.addAll(newsList);

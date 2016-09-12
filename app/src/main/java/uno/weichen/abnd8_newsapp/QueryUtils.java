@@ -157,7 +157,7 @@ public class QueryUtils {
             return "";
         }
 
-        return webPublicationDate.substring(0,10);
+        return webPublicationDate.substring(0, 10);
     }
 
     /**

@@ -19,7 +19,7 @@ public class NewsAdapter extends BaseAdapter {
     List<News> newsList;
     Context context;
 
-    public NewsAdapter(Context context,List<News> newsList) {
+    public NewsAdapter(Context context, List<News> newsList) {
         super();
         this.newsList = newsList;
         this.context = context;
@@ -28,7 +28,7 @@ public class NewsAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        Log.d(LOG_TAG,"GetCount number is "+newsList.size());
+        Log.d(LOG_TAG, "GetCount number is " + newsList.size());
         return this.newsList.size();
     }
 
@@ -47,7 +47,7 @@ public class NewsAdapter extends BaseAdapter {
         newsList.addAll(newList);
     }
 
-    public void clear(){
+    public void clear() {
         newsList.clear();
     }
 
@@ -57,7 +57,7 @@ public class NewsAdapter extends BaseAdapter {
         /**
          * inflate the view and set the view holder
          */
-        Log.d(LOG_TAG,"getView start");
+        Log.d(LOG_TAG, "getView start");
         View listItemView = convertView;
         ViewHolder holder;
         if (listItemView == null) {

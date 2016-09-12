@@ -9,7 +9,7 @@ public class News {
     private String mAuthor;
     private String mWebPublicationDate;
 
-    public News(String mWebTitle, String mWebUrl, String mAuthor, String mWebPublicationDate ) {
+    public News(String mWebTitle, String mWebUrl, String mAuthor, String mWebPublicationDate) {
         this.mWebTitle = mWebTitle;
         this.mWebUrl = mWebUrl;
         this.mAuthor = mAuthor;

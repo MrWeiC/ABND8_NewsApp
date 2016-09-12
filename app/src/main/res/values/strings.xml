@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">ABND8_NewsApp</string>
+    <string name="app_name">Recent News</string>
+    <string name="no_news">No news found</string>
+    <string name="no_internet">No Internet Connection</string>
 </resources>
