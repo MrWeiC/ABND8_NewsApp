@@ -46,15 +46,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          * Setup View/Data components
          */
         mNewsListView = (ListView) findViewById(R.id.list);
+
+        mNewsListView.setEmptyView(mEmptyStateTextView);
         // Create a new {@link NewsAdapter} of news
         mAdapter = new NewsAdapter(this, newsList);
-        mNewsListView.setEmptyView(mEmptyStateTextView);
         mNewsListView.setAdapter(mAdapter);
 
         // Get the TextView view
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_list_view);
         // Get the ProgressBar view
         mProgressbarView = (ProgressBar) findViewById(R.id.loading_spinner);
+
+
+
 
         //Set the listview lister that to monitor click
         mNewsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -83,8 +87,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         } else {
             mProgressbarView.setVisibility(View.GONE);
             mEmptyStateTextView.setText("No Internet Connection");
+            if(mNewsListView.getAdapter() == null){
+                Log.v(LOG_TAG, "Adapter is really null");
+                return;
+            }
+            if(mAdapter.isEmpty()){
+                Log.v(LOG_TAG, "Adapter is empty ");
 
-
+            }
         }
     }
 
@@ -100,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mEmptyStateTextView.setText("No news found");
         mProgressbarView.setVisibility(View.GONE);
         if (newsList == null) {
+            Log.v(LOG_TAG, "newsList is null");
             return;
         }
         Log.v(LOG_TAG, "Start update ui");
@@ -118,8 +129,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * @param newsList
      */
     private void updateUi(List<News> newsList) {
-        mAdapter.clear(newsList);
+        mAdapter.clear();
         if (newsList != null) {
+            if(mAdapter.isEmpty()) {
+                Log.v(LOG_TAG, "mAdapter is empty");
+            }
             mAdapter.addAll(newsList);
             mAdapter.notifyDataSetChanged();
         }

@@ -47,7 +47,7 @@ public class NewsAdapter extends BaseAdapter {
         newsList.addAll(newList);
     }
 
-    public void clear(List newList){
+    public void clear(){
         newsList.clear();
     }
 

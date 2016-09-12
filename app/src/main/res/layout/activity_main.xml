@@ -18,7 +18,6 @@
         android:layout_height="match_parent"
         android:dividerHeight="0dp"
         android:orientation="vertical"
-        tools:listitem="@layout/list_item"
         android:divider="@null"/>
     <TextView
         android:id="@+id/empty_list_view"
