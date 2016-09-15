@@ -125,12 +125,23 @@ public class QueryUtils {
                 String webUrl = result.getString("webUrl");
                 String webPublicationDate = formatDate(result.getString("webPublicationDate"));
                 String author = "";
-                JSONArray references = result.getJSONArray("references");
-                if (references.length() > 0) {
+                JSONArray tags = result.getJSONArray("tags");
+                if (tags.length() > 0) {
                     try {
-                        JSONObject authorJSON = references.getJSONObject(0);
-                        author = authorJSON.getString("id");
-                        //90% of time, the author section will be empty.
+                        JSONObject tagWithAuthor = tags.getJSONObject(0);
+                        /**
+                         *  Questions, I tried this...
+                         *  String firstName = tags.get(0).getString("firstName")
+                         *  it says getString cannot be resolved, why is that??
+                         */
+
+                        String firstName = tagWithAuthor.getString("firstName");
+                        String lastName = tagWithAuthor.getString("lastName");
+                        if(!firstName.equals("")){
+                            author = firstName + " ";
+                        }
+                        author += lastName;
+
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, "Problem get author text even if there are author info.", e);
 

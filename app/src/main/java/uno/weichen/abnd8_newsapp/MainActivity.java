@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -25,13 +26,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * URL for news data from Guardianapis
      */
-    private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-references=author";
+    private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-tags=contributor";
     private static final int NEWS_LOADER_ID = 1;
     public List<News> newsList = new ArrayList<>();
     private NewsAdapter mAdapter;
     private ListView mNewsListView;
     private TextView mEmptyStateTextView;
     private ProgressBar mProgressbarView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private android.app.LoaderManager loaderManager;
 
 
     @Override
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mProgressbarView = (ProgressBar) findViewById(R.id.loading_spinner);
         // Get the TextView view
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_list_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
 
         /**
          * Set View
@@ -55,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mAdapter = new NewsAdapter(this, newsList);
         mNewsListView.setAdapter(mAdapter);
         mNewsListView.setEmptyView(mEmptyStateTextView);
-
 
         //Set the listview lister that to monitor click
         mNewsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,14 +76,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            // Create a Async tasks loader to query the list of earthquake locations.
+            // Create a Async tasks loader to query the list of news.
             // Get a reference to the LoaderManager, in order to interact with loaders.
-            android.app.LoaderManager loaderManager = getLoaderManager();
+            loaderManager = getLoaderManager();
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
             loaderManager.initLoader(NEWS_LOADER_ID, null, this);
 
+            //Should have internet connection then we could set the RefreshListener
+            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+                @Override
+                public void onRefresh() {
+                    Log.v(LOG_TAG,"onRefresh was called");
+                    refreshContent();
+
+                }
+            });
         } else {
             mProgressbarView.setVisibility(View.GONE);
             mEmptyStateTextView.setText(R.string.no_internet);
@@ -88,11 +101,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Log.v(LOG_TAG, "Adapter is really null");
                 return;
             }
-            if (mAdapter.isEmpty()) {
-                Log.v(LOG_TAG, "Adapter is empty ");
-
-            }
         }
+
     }
 
 
@@ -107,11 +117,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mEmptyStateTextView.setText(R.string.no_news);
         mProgressbarView.setVisibility(View.GONE);
         if (newsList == null) {
-            Log.v(LOG_TAG, "newsList is null");
             return;
         }
         Log.v(LOG_TAG, "Start update ui");
-        updateUi(newsList);
+        updateUi(newsList);/**/
     }
 
     @Override
@@ -128,11 +137,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void updateUi(List<News> newsList) {
         mAdapter.clear();
         if (newsList != null) {
-            if (mAdapter.isEmpty()) {
-                Log.v(LOG_TAG, "mAdapter is empty");
-            }
             mAdapter.addAll(newsList);
             mAdapter.notifyDataSetChanged();
         }
     }
+
+    private void refreshContent() {
+        if(loaderManager!=null){
+            Log.v(LOG_TAG, "RefreshContent was called.");
+            loaderManager.initLoader(NEWS_LOADER_ID, null, this);
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
 }
