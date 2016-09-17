@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ProgressBar mProgressbarView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private android.app.LoaderManager loaderManager;
-
+    private int mInterval = 30000; // 5 seconds by default, can be changed later
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +91,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 @Override
                 public void onRefresh() {
-                    Log.v(LOG_TAG,"onRefresh was called");
+                    Log.v(LOG_TAG, "onRefresh was called");
                     refreshContent();
 
                 }
             });
+            /**
+             * Use Handler to create task to check news every 30 sec
+             */
+            mHandler = new Handler();
+            startRepeatingTask();
         } else {
             mProgressbarView.setVisibility(View.GONE);
             mEmptyStateTextView.setText(R.string.no_internet);
@@ -143,11 +150,42 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void refreshContent() {
-        if(loaderManager!=null){
+        if (loaderManager != null) {
             Log.v(LOG_TAG, "RefreshContent was called.");
             loaderManager.initLoader(NEWS_LOADER_ID, null, this);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
+
+    /**
+     * For repeating Tasks
+     */
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopRepeatingTask();
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                refreshContent(); //this function can change value of mInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
 
 }
