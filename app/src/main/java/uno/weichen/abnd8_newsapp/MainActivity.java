@@ -2,19 +2,17 @@ package uno.weichen.abnd8_newsapp;
 
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -30,8 +28,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-tags=contributor";
     private static final int NEWS_LOADER_ID = 1;
     public List<News> newsList = new ArrayList<>();
-    private NewsAdapter mAdapter;
-    private ListView mNewsListView;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
     private TextView mEmptyStateTextView;
     private ProgressBar mProgressbarView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         /**
          * Resolve View
          */
-        mNewsListView = (ListView) findViewById(R.id.list);
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
         // Get the ProgressBar view
         mProgressbarView = (ProgressBar) findViewById(R.id.loading_spinner);
         // Get the TextView view
@@ -58,12 +57,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
          * Set View
          */
         // Create a new {@link NewsAdapter} of news
-        mAdapter = new NewsAdapter(this, newsList);
-        mNewsListView.setAdapter(mAdapter);
-        mNewsListView.setEmptyView(mEmptyStateTextView);
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new NewsAdapter(newsList);
+        mRecyclerView.setHasFixedSize(true);
+
+        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setEmptyView(mEmptyStateTextView);
 
         //Set the listview lister that to monitor click
-        mNewsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       /* mNewsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 News news = (News) parent.getItemAtPosition(position);
@@ -71,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 browserIntent.setData(Uri.parse(news.getmWebUrl()));
                 startActivity(browserIntent);
             }
-        });
+        });*/
 
         //Check if there are internet connection
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -104,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         } else {
             mProgressbarView.setVisibility(View.GONE);
             mEmptyStateTextView.setText(R.string.no_internet);
-            if (mNewsListView.getAdapter() == null) {
+            if (mRecyclerView.getAdapter() == null) {
                 Log.v(LOG_TAG, "Adapter is really null");
                 return;
             }
@@ -126,8 +134,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (newsList == null) {
             return;
         }
+        Log.v(LOG_TAG, "After pass data to newslist. Size is "+newsList.size());
+
         Log.v(LOG_TAG, "Start update ui");
-        updateUi(newsList);/**/
+        updateUi(newsList);
     }
 
     @Override
@@ -142,9 +152,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * @param newsList
      */
     private void updateUi(List<News> newsList) {
-        mAdapter.clear();
+        Log.v(LOG_TAG, "newsList size is from newsList. newsList.size() is "+newsList.size());
+        Log.v(LOG_TAG, "newsList size from mAdapter.getItemCount()"+mAdapter.getItemCount());
         if (newsList != null) {
-            mAdapter.addAll(newsList);
+            mAdapter.setData(newsList);
+            Log.v(LOG_TAG, "newsList size is from newsList. newsList.size() after clear()and addAll() is "+newsList.size());
             mAdapter.notifyDataSetChanged();
         }
     }

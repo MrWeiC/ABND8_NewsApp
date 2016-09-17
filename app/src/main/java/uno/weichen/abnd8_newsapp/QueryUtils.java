@@ -194,7 +194,7 @@ public class QueryUtils {
 
         }
         List<News> newsData = extractNews(jsonResponse);
-        Log.v(LOG_TAG, "Successfully extract News ArrayList");
+        Log.v(LOG_TAG, "Successfully extract News ArrayList. Size is "+newsData.size());
         return newsData;
     }
 
