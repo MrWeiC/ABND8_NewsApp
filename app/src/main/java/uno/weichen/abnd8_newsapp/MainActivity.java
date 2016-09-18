@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      * URL for news data from Guardianapis
      */
     private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=article&page-size=24&api-key=test&show-tags=contributor";
-    //Test
+    //Test No result URL
     //private static final String GUARDIANAPIS_REQUEST_URL = "http://content.guardianapis.com/search?type=articldfdfdffdfdfe&page-size=24&api-key=test&show-tags=contributor";/**/
     private static final int NEWS_LOADER_ID = 1;
     public List<News> newsList = new ArrayList<>();
@@ -72,6 +72,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mRecyclerView.setAdapter(mAdapter);
 
+        mSwipeRefreshLayout_empty.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                Log.v(LOG_TAG, "onRefresh previous no internet/no result called");
+                loaderManager = getLoaderManager();
+                refreshContent();
+
+            }
+        });
+
         //Check if there are internet connection
         ConnectivityManager connMgr = (ConnectivityManager)
             getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,22 +101,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 @Override
                 public void onRefresh() {
-                    Log.v(LOG_TAG, "onRefresh was called");
+                    Log.v(LOG_TAG, "onRefresh previous with internet was called");
                     refreshContent();
-
                 }
             });
 
             //Should have internet connection then we could set the RefreshListener
-            mSwipeRefreshLayout_empty.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-                @Override
-                public void onRefresh() {
-                    Log.v(LOG_TAG, "onRefresh was called");
-                    refreshContent();
-
-                }
-            });
 
             /**
              * Use Handler to create task to check news every 30 sec
@@ -140,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.v(LOG_TAG, "After pass data to newslist. Size is " + newsList.size());
         Log.v(LOG_TAG, "Start update ui");
         updateUi(newsList);
+        //Question for reviewer, where is the best place to set those setRefreshing(false);?
+        mSwipeRefreshLayout.setRefreshing(false);
+        mSwipeRefreshLayout_empty.setRefreshing(false);
     }
 
     @Override
@@ -167,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (loaderManager != null) {
             Log.v(LOG_TAG, "RefreshContent was called.");
             loaderManager.initLoader(NEWS_LOADER_ID, null, this);
-            mSwipeRefreshLayout.setRefreshing(false);
+
         }
     }
 
@@ -180,7 +184,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     void stopRepeatingTask() {
-        mHandler.removeCallbacks(mStatusChecker);
+        if (mHandler != null) {
+            mHandler.removeCallbacks(mStatusChecker);
+        }
     }
 
     @Override
@@ -195,8 +201,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             try {
                 refreshContent(); //this function can change value of mInterval.
             } finally {
-                // 100% guarantee that this always happens, even if
-                // your update method throws an exception
+
                 mHandler.postDelayed(mStatusChecker, mInterval);
             }
         }
