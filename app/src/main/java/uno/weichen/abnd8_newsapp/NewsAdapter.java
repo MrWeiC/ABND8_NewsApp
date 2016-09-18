@@ -1,40 +1,76 @@
 package uno.weichen.abnd8_newsapp;
 
-import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
 
+
 /**
  * Created by weichen on 9/10/16.
  */
-public class NewsAdapter extends BaseAdapter {
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public static final String LOG_TAG = NewsAdapter.class.getName();
 
-    List<News> newsList;
-    Context context;
 
-    public NewsAdapter(Context context, List<News> newsList) {
+    private List<News> mNewsList;
+
+    public NewsAdapter(List<News> newsList) {
         super();
-        this.newsList = newsList;
-        this.context = context;
+        this.mNewsList = newsList;
+        Log.i(LOG_TAG, "mNewList.size =  " + mNewsList.size());
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView webTitleTextView;
+        public TextView authorTextView;
+        public TextView dateTextView;
+
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            webTitleTextView = (TextView) itemView.findViewById(R.id.webTitle_textview);
+            authorTextView = (TextView) itemView.findViewById(R.id.author_textview);
+            dateTextView = (TextView) itemView.findViewById(R.id.date_textview);
+        }
 
     }
 
     @Override
-    public int getCount() {
-        Log.d(LOG_TAG, "GetCount number is " + newsList.size());
-        return this.newsList.size();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        /**
+         * inflate the view and set the view holder
+         */
+        View recyclerView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent,
+            false);
+        ViewHolder vh = new ViewHolder(recyclerView);
+
+        return vh;
     }
 
     @Override
-    public News getItem(int position) {
-        return this.newsList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final News news = mNewsList.get(position);
+        holder.webTitleTextView.setText(news.getmWebTitle());
+        holder.authorTextView.setText(news.getmAuthor());
+        holder.dateTextView.setText(news.getmWebPublicationDate());
+        Log.v(LOG_TAG, "The position is " + position + ". And Title is " + news.getmWebTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse(news.getmWebUrl()));
+                v.getContext().startActivity(browserIntent);
+
+            }
+        });
     }
 
     @Override
@@ -42,51 +78,33 @@ public class NewsAdapter extends BaseAdapter {
         return position;
     }
 
-    public void addAll(List newList) {
-        newsList.clear();
-        newsList.addAll(newList);
+    public void addEntity(int i, News entity) {
+        mNewsList.add(i, entity);
+        notifyItemInserted(i);
     }
 
-    public void clear() {
-        newsList.clear();
+    public void deleteEntity(int i) {
+        mNewsList.remove(i);
+        notifyItemRemoved(i);
+    }
+
+    public void setData(List<News> data) {
+        // Remove all deleted items.
+        for (int i = mNewsList.size() - 1; i >= 0; --i) {
+            deleteEntity(i);
+        }
+
+        // Add and move items.
+        for (int i = 0; i < data.size(); ++i) {
+            News entity = data.get(i);
+            addEntity(i, entity);
+        }
     }
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        /**
-         * inflate the view and set the view holder
-         */
-        Log.d(LOG_TAG, "getView start");
-        View listItemView = convertView;
-        ViewHolder holder;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(context).inflate(R.layout.list_item, parent,
-                false);
-            holder = new ViewHolder();
-            holder.webTitleTextView = (TextView) listItemView.findViewById(R.id.webTitle_textview);
-            holder.authorTextView = (TextView) listItemView.findViewById(R.id.author_textview);
-            holder.dateTextView = (TextView) listItemView.findViewById(R.id.date_textview);
-            listItemView.setTag(holder);
-        } else {
-            holder = (ViewHolder) listItemView.getTag();
-        }
-        /**
-         * get the new object and set the value
-         */
-        News news = getItem(position);
-
-        holder.webTitleTextView.setText(news.getmWebTitle());
-        holder.authorTextView.setText(news.getmAuthor());
-        holder.dateTextView.setText(news.getmWebPublicationDate());
-
-        return listItemView;
+    public int getItemCount() {
+        return mNewsList.size();
     }
 
-
-    static class ViewHolder {
-        private TextView webTitleTextView;
-        private TextView authorTextView;
-        private TextView dateTextView;
-    }
 }

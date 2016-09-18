@@ -137,7 +137,7 @@ public class QueryUtils {
 
                         String firstName = tagWithAuthor.getString("firstName");
                         String lastName = tagWithAuthor.getString("lastName");
-                        if(!firstName.equals("")){
+                        if (!firstName.equals("")) {
                             author = firstName + " ";
                         }
                         author += lastName;
@@ -149,7 +149,6 @@ public class QueryUtils {
                 }
                 newsData.add(new News(webTitle, webUrl, author, webPublicationDate));
             }
-
 
         } catch (JSONException e) {
             // If an error is thrown when executing any of the above statements in the "try" block,
@@ -194,7 +193,7 @@ public class QueryUtils {
 
         }
         List<News> newsData = extractNews(jsonResponse);
-        Log.v(LOG_TAG, "Successfully extract News ArrayList");
+        Log.v(LOG_TAG, "Successfully extract News ArrayList. Size is " + newsData.size());
         return newsData;
     }
 

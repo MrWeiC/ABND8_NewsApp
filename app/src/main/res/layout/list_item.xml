@@ -1,42 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="8dp"
-    android:paddingLeft="32dp"
+    android:paddingLeft="24dp"
     android:paddingRight="16dp"
     android:paddingTop="8dp">
 
     <TextView
         android:id="@+id/webTitle_textview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
         android:ellipsize="end"
         android:singleLine="true"
-        tools:text="WebTitle"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        tools:text="WebTitle"/>
 
     <TextView
         android:id="@+id/author_textview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/webTitle_textview"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        tools:text="author"
-        android:gravity="right"/>
+        android:gravity="end"
+        tools:text="author"/>
 
     <TextView
         android:id="@+id/date_textview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/author_textview"
         android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:gravity="right"
+        android:gravity="end"
         tools:text="date"/>
 
-</LinearLayout>
+</RelativeLayout>
