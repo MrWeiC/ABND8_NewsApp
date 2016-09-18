@@ -1,5 +1,7 @@
 package uno.weichen.abnd8_newsapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,11 +11,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
+
 /**
  * Created by weichen on 9/10/16.
  */
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public static final String LOG_TAG = NewsAdapter.class.getName();
+
 
     private List<News> mNewsList;
 
@@ -28,12 +32,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         public TextView authorTextView;
         public TextView dateTextView;
 
+
         public ViewHolder(View itemView) {
             super(itemView);
             webTitleTextView = (TextView) itemView.findViewById(R.id.webTitle_textview);
             authorTextView = (TextView) itemView.findViewById(R.id.author_textview);
             dateTextView = (TextView) itemView.findViewById(R.id.date_textview);
         }
+
     }
 
     @Override
@@ -49,12 +55,22 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        News news = mNewsList.get(position);
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        final News news = mNewsList.get(position);
         holder.webTitleTextView.setText(news.getmWebTitle());
         holder.authorTextView.setText(news.getmAuthor());
         holder.dateTextView.setText(news.getmWebPublicationDate());
         Log.v(LOG_TAG, "The position is " + position + ". And Title is " + news.getmWebTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse(news.getmWebUrl()));
+                v.getContext().startActivity(browserIntent);
+
+            }
+        });
     }
 
     @Override
@@ -72,7 +88,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         notifyItemRemoved(i);
     }
 
-    public void setData( List<News> data) {
+    public void setData(List<News> data) {
         // Remove all deleted items.
         for (int i = mNewsList.size() - 1; i >= 0; --i) {
             deleteEntity(i);
